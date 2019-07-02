@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  license:
+    name: MIT
+  title: Video Emotion predictor
+  version: 1.0.0
+servers:
+- url: /api/v1
+paths:
+  /predict/video:
+    post:
+      operationId: predict_video
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object'
+        content:
+          application/json:
+            schema:
+              properties:
+                fileName:
+                  type: string
+                fileContent:
+                  format: byte
+                  type: string
+              type: object
+        description: Input Video
+        required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emotion_timeline'
+          description: Timeline with predicted emotions
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: predicts the emotions in from still images in a video over time
+      tags:
+      - emotion
+      x-openapi-router-controller: openapi_server.controllers.emotion_controller
+components:
+  requestBodies:
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+      required: true
+  schemas:
+    Emotion_timeline:
+      example:
+        emotions:
+        - emotion: emotion
+          time: 0.8008281904610115
+        - emotion: emotion
+          time: 0.8008281904610115
+        videoname: videoname
+      properties:
+        videoname:
+          type: string
+        emotions:
+          items:
+            $ref: '#/components/schemas/Emotion_timeline_emotions'
+          type: array
+      required:
+      - emotions
+      - videoname
+    Error:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+      required:
+      - code
+      - message
+    inline_object:
+      properties:
+        fileName:
+          type: string
+        fileContent:
+          format: byte
+          type: string
+      type: object
+    Emotion_timeline_emotions:
+      example:
+        emotion: emotion
+        time: 0.8008281904610115
+      properties:
+        time:
+          type: number
+        emotion:
+          type: string

@@ -1,0 +1,71 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Video Emotion predictor
+  license:
+    name: MIT
+servers:
+  - url: /api/v1
+paths:
+  /predict/video:
+    post:
+      summary: predicts the emotions in from still images in a video over time
+      operationId: predictVideo
+      tags:
+        - emotion
+      requestBody:
+        description: Input Video
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                fileContent:
+                  type: string
+                  format: byte
+              
+      responses:
+        200:
+          description: Timeline with predicted emotions
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Emotion_timeline"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Emotion_timeline:
+      required:
+        - videoname
+        - emotions
+      properties:
+        videoname: 
+          type: string
+        emotions: 
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                type: number
+              emotion:
+                type: string
+              
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

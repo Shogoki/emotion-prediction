@@ -1,0 +1,18 @@
+version: '3.0'
+
+services:
+  api: 
+    image: shogoki/emopred-api
+    build: ./api
+    environment:
+      TF_CLASSIFIER_URL: http://classifier:8501/v1/models/model:predict
+    #restart: always
+    ports:
+      - 8080:8080
+  classifier:
+    image: shogoki/emopred-classifier
+    build: ./classifier
+    environment:
+      MODEL_NAME: model
+
+    
